@@ -8,7 +8,7 @@ void APP_LEDStatus(void)
 {
     uint32_t ledCount = 0U;
 
-    while(ledCount <= 1000U)
+    while(ledCount <= 3000U)
     { 
         if(ledCount <= 250U)
         {
