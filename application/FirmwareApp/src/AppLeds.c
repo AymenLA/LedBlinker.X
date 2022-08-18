@@ -12,7 +12,7 @@ void APP_LEDStatus(void)
     { 
         if(ledCount <= 250U)
         {
-            LED_Off(LED_STATE);
+            LED_On(LED_STATE);
         }
         else if(ledCount > 250U)
         {
