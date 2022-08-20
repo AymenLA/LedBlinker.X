@@ -45,12 +45,12 @@ set(MCU_DEVICE "18F4550")
 string(TOLOWER ${MCU_DEVICE} LOWER_CASE_MCU_DEVICE )
 message(STATUS "Microchip 8-bits PIC(R) target set to ${MCU_DEVICE}")
 
-# determin device family package from MCU device
+# determin device familly package from MCU device
 file (GLOB_RECURSE PATH_TO_PIC_INI "${YOUR_MPLABX_INSTALL_DIRECTORY}/packs/Microchip/*/${LOWER_CASE_MCU_DEVICE}.ini")
 if(NOT EXISTS ${PATH_TO_PIC_INI})
     message(FATAL_ERROR "Microchip 8-bits PIC(R) ${MCU_DEVICE} device familly package not found")
 else()
-    # remove pic/dat/ini/<target_device>.ini from the path, we should be left with device family pack path alone
+    # remove pic/dat/ini/<target_device>.ini from the path, we should be left with device familly pack path alone
     string(REGEX REPLACE "(.*)(\/pic\/dat\/ini\/${LOWER_CASE_MCU_DEVICE}.ini)" "\\1" DEVICE_FIMILLY_PACK ${PATH_TO_PIC_INI})
     message(STATUS "Microchip 8-bits PIC(R) device PIC${MCU_DEVICE} familly package found : ${DEVICE_FIMILLY_PACK}")
 endif()
