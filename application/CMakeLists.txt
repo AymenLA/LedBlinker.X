@@ -25,13 +25,6 @@ if((NOT EXISTS ${MPLABX_JAVA_EXECUTABLE_PATH}) OR (NOT EXISTS ${MPLAB_IPE_CMD_CO
     message(WARNING "MPLAB IPE Programmer environment not found, \"make burn\" command will not work")
 endif()
 
-# target device
-# @TODO if target device is empty string or not listed in compiler directory, leave with fatal error
-# regex to verify MCU device name format : sed -n -E '/^1[268][fF][[:digit:]][[:digit:]][[:alpha:]]?[[:digit:]][[:digit:]]?$/p'
-# starts with '1', second character is one from [2, 6, 8], third character if upper or lower case 'F', followed by 2 digits, 
-# could have one letter in the middle and is always fallowed by one digit or two
-set(MCU_DEVICE "18F4550")
-
 # tool selection could be done by 
 # P : programmer name
 # S : serial number
@@ -43,18 +36,27 @@ set(PIC_PROGRAMMER_TOOL_SELECTION "P")
 # BURxxxxxxxxx : serial number
 set(PIC_PROGRAMMER_IDENTIFICATION "PK4")
 
-# target device familly package
-# @TODO dynamic family pack based on current target device
-set(DEVICE_FIMILLY_PACK "/opt/microchip/mplabx/v6.00/packs/Microchip/PIC18Fxxxx_DFP/1.3.36/xc8")
-if(NOT EXISTS ${DEVICE_FIMILLY_PACK})
-    # target device familly package not found, leave with fatal error
-    message(FATAL_ERROR "Microchip 8-bits PIC(R) device familly package not found")
+# target device
+# @TODO if target device is empty string or not listed in compiler directory, leave with fatal error
+# regex to verify MCU device name format : sed -n -E '/^1[268][fF][[:digit:]][[:digit:]][[:alpha:]]?[[:digit:]][[:digit:]]?$/p'
+# starts with '1', second character is one from [2, 6, 8], third character if upper or lower case 'F', followed by 2 digits, 
+# could have one letter in the middle and is always fallowed by one digit or two
+set(MCU_DEVICE "18F4550")
+string(TOLOWER ${MCU_DEVICE} LOWER_CASE_MCU_DEVICE )
+message(STATUS "Microchip 8-bits PIC(R) target set to ${MCU_DEVICE}")
+
+# determin device family package from MCU device
+file (GLOB_RECURSE PATH_TO_PIC_INI "${YOUR_MPLABX_INSTALL_DIRECTORY}/packs/Microchip/*/${LOWER_CASE_MCU_DEVICE}.ini")
+if(NOT EXISTS ${PATH_TO_PIC_INI})
+    message(FATAL_ERROR "Microchip 8-bits PIC(R) ${MCU_DEVICE} device familly package not found")
 else()
-    message(STATUS "Microchip 8-bits PIC(R) device PIC${MCU_DEVICE} familly package found")
+    # remove pic/dat/ini/<target_device>.ini from the path, we should be left with device family pack path alone
+    string(REGEX REPLACE "(.*)(\/pic\/dat\/ini\/${LOWER_CASE_MCU_DEVICE}.ini)" "\\1" DEVICE_FIMILLY_PACK ${PATH_TO_PIC_INI})
+    message(STATUS "Microchip 8-bits PIC(R) device PIC${MCU_DEVICE} familly package found : ${DEVICE_FIMILLY_PACK}")
 endif()
 
 # extract project name from current directory
-STRING(REGEX REPLACE "(.*\/)(.*)(\/build$)" "\\2" PROJECT_DIR_NAME ${CMAKE_CURRENT_BINARY_DIR})
+string(REGEX REPLACE "(.*\/)(.*)(\/build$)" "\\2" PROJECT_DIR_NAME ${CMAKE_CURRENT_BINARY_DIR})
 # remove any special character in project name since linker doesn't accept that in the production files names
 string(REGEX REPLACE "[^a-zA-Z]" "" PROJECT_DIR_NAME_CLEARED ${PROJECT_DIR_NAME})
 message(STATUS "Setting project name to ${PROJECT_DIR_NAME_CLEARED}")
