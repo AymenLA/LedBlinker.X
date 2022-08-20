@@ -23,18 +23,18 @@ set(MPLAB_IPE_CMD_COMMAND "${YOUR_MPLABX_INSTALL_DIRECTORY}/mplab_platform/mplab
 if((NOT EXISTS ${MPLABX_JAVA_EXECUTABLE_PATH}) OR (NOT EXISTS ${MPLAB_IPE_CMD_COMMAND}))
     # one or more elements needed by the burn target command was not found, print a warning message
     message(WARNING "MPLAB IPE Programmer environment not found, \"make burn\" command will not work")
+else()
+    # tool selection could be done by 
+    # P : programmer name
+    # S : serial number
+    set(PIC_PROGRAMMER_TOOL_SELECTION "P")
+
+    # use programmer name or serial number
+    # PK4 : PICKIT4
+    # PK3 : PICKIT3
+    # BURxxxxxxxxx : serial number
+    set(PIC_PROGRAMMER_IDENTIFICATION "PK4")
 endif()
-
-# tool selection could be done by 
-# P : programmer name
-# S : serial number
-set(PIC_PROGRAMMER_TOOL_SELECTION "P")
-
-# use programmer name or serial number
-# PK4 : PICKIT4
-# PK3 : PICKIT3
-# BURxxxxxxxxx : serial number
-set(PIC_PROGRAMMER_IDENTIFICATION "PK4")
 
 # target device
 # @TODO if target device is empty string or not listed in compiler directory, leave with fatal error
